@@ -2,6 +2,13 @@ package com.demo.item_management.controller;
 
 import com.demo.item_management.model.Item;
 import com.demo.item_management.service.ItemService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,35 +19,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * REST Controller for Item Management
- * Provides endpoints for creating and retrieving items
- */
 @RestController
 @RequestMapping("/api/items")
 @RequiredArgsConstructor
+@Tag(name = "Item Management", description = "APIs for managing items with in-memory storage")
 public class ItemController {
     
     private final ItemService itemService;
     
-    /**
-     * Add a new item
-     * 
-     * POST /api/items
-     * 
-     * Request Body:
-     * {
-     *   "name": "Item Name",
-     *   "description": "Item Description",
-     *   "category": "Category Name",
-     *   "price": 99.99
-     * }
-     * 
-     * @param item The item to be added (validated)
-     * @return ResponseEntity with the created item and HTTP 201 status
-     */
+    @Operation(
+        summary = "Create a new item",
+        description = "Adds a new item to the in-memory storage. Item name and description are required."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "201",
+            description = "Item created successfully",
+            content = @Content(schema = @Schema(implementation = Item.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid input - validation failed"
+        )
+    })
     @PostMapping
-    public ResponseEntity<Map<String, Object>> addItem(@Valid @RequestBody Item item) {
+    public ResponseEntity<Map<String, Object>> addItem(
+            @Parameter(description = "Item object to be created", required = true)
+            @Valid @RequestBody Item item) {
         Item createdItem = itemService.addItem(item);
         
         Map<String, Object> response = new HashMap<>();
@@ -51,16 +56,25 @@ public class ItemController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     
-    /**
-     * Get a single item by ID
-     * 
-     * GET /api/items/{id}
-     * 
-     * @param id The ID of the item to retrieve
-     * @return ResponseEntity with the item if found, or 404 if not found
-     */
+    @Operation(
+        summary = "Get item by ID",
+        description = "Retrieves a specific item from storage by its unique ID"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Item found",
+            content = @Content(schema = @Schema(implementation = Item.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Item not found"
+        )
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> getItemById(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> getItemById(
+            @Parameter(description = "ID of the item to retrieve", required = true, example = "1")
+            @PathVariable Long id) {
         return itemService.getItemById(id)
                 .map(item -> {
                     Map<String, Object> response = new HashMap<>();
@@ -76,13 +90,16 @@ public class ItemController {
                 });
     }
     
-    /**
-     * Get all items (bonus endpoint for convenience)
-     * 
-     * GET /api/items
-     * 
-     * @return ResponseEntity with list of all items
-     */
+    @Operation(
+        summary = "Get all items",
+        description = "Retrieves all items from the in-memory storage"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successfully retrieved all items"
+        )
+    })
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllItems() {
         List<Item> items = itemService.getAllItems();
@@ -95,13 +112,16 @@ public class ItemController {
         return ResponseEntity.ok(response);
     }
     
-    /**
-     * Health check endpoint
-     * 
-     * GET /api/items/health
-     * 
-     * @return ResponseEntity with health status
-     */
+    @Operation(
+        summary = "Health check",
+        description = "Check if the API is running and get the current item count"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "API is healthy and running"
+        )
+    })
     @GetMapping("/health")
     public ResponseEntity<Map<String, Object>> healthCheck() {
         Map<String, Object> response = new HashMap<>();

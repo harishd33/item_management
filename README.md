@@ -9,6 +9,7 @@ A RESTful API for managing items with in-memory storage using Spring Boot.
 - ✅ Input validation
 - ✅ Clean RESTful API design
 - ✅ Comprehensive error handling
+- ✅ **Interactive API Documentation (Swagger/OpenAPI)**
 - ✅ Well-documented code
 
 ## Technology Stack
@@ -160,6 +161,25 @@ The `Item` class has the following properties:
   "totalItems": 5
 }
 ```
+
+## 📖 Interactive API Documentation (Swagger UI)
+
+Once the application is running, you can access the **interactive API documentation** at:
+
+**Swagger UI:** [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+**Production:** [https://web-production-47ac5.up.railway.app/swagger-ui.html](https://web-production-47ac5.up.railway.app/swagger-ui.html)
+
+The Swagger UI provides:
+- 📝 Complete API documentation
+- 🧪 Interactive testing interface - Test all endpoints directly from your browser
+- 📊 Request/Response examples
+- ✅ Input validation details
+- 🔍 Schema definitions
+
+**No need to use cURL or Postman!** Just open the Swagger UI and test all endpoints with a beautiful interface.
+
+---
 
 ## How to Run the Application
 
